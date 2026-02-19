@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.idea/
+.serena/
+.claude/
+node_modules/
+.env
+*.egg-info/
+dist/
+build/
+.next/
+nul
