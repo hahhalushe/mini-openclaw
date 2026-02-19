@@ -1,6 +1,7 @@
 "use client";
 
 import { ChatMessage as ChatMessageType } from "@/lib/store";
+import ThoughtChain from "./ThoughtChain";
 
 interface Props {
   message: ChatMessageType;
@@ -28,6 +29,13 @@ export default function ChatMessage({ message }: Props) {
             </span>
           )}
         </div>
+
+        {/* Thought chain for assistant messages */}
+        {!isUser && message.thoughtChain && message.thoughtChain.length > 0 && (
+          <div className="mt-2 border-t border-gray-200/30 pt-2">
+            <ThoughtChain events={message.thoughtChain} />
+          </div>
+        )}
       </div>
     </div>
   );
