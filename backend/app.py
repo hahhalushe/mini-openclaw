@@ -1,16 +1,37 @@
 """Mini-OpenClaw backend entry point."""
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from config import config
+from graph.agent import AgentManager
+from tools.skills_scanner import write_snapshot
+
+BASE_DIR = Path(__file__).resolve().parent
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: scan skills, initialize agent, build memory index
+    # Startup
     print("[startup] Mini-OpenClaw backend starting...")
+    write_snapshot(BASE_DIR)
+
+    agent_manager = AgentManager(base_dir=BASE_DIR, config=config)
+    try:
+        agent_manager.initialize()
+        print(f"[startup] Agent engine: {config.agent_engine}")
+    except Exception as e:
+        print(f"[startup] Warning: Agent initialization failed: {e}")
+        print("[startup] Chat will not work until LLM provider is configured.")
+
+    app.state.agent_manager = agent_manager
+    app.state.base_dir = BASE_DIR
+
     yield
+
     # Shutdown
     print("[shutdown] Mini-OpenClaw backend stopping...")
 
@@ -25,7 +46,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Register routers
+from api.chat import router as chat_router
+app.include_router(chat_router)
+
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok"}
+    return {"status": "ok", "engine": config.agent_engine}
