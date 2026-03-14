@@ -15,13 +15,13 @@ from config import config, AppConfig
 PROVIDERS: list[ProviderSpec] = [
     ProviderSpec(
         name="zhipu",
-        llm_class="langchain_community.chat_models.ChatZhipuAI",
+        llm_class="langchain_openai.ChatOpenAI",
         env_key="ZHIPUAI_API_KEY",
         display_name="\u667a\u8c31 GLM",
-        default_model="glm-4.7-flash",
-        api_base_default="https://open.bigmodel.cn/api/paas/v4",
-        manages_own_base=True,
-        api_key_alias="zhipuai_api_key",
+        default_model="Pro/zai-org/GLM-4.7",
+        api_base_default="https://api.siliconflow.cn/v1",
+        manages_own_base=False,
+        api_key_alias="",
     ),
     ProviderSpec(
         name="deepseek",
