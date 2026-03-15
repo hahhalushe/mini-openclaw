@@ -17,18 +17,18 @@ from tools.skills_scanner import write_snapshot
 
 class AgentManager:
     def __init__(self, base_dir: str | Path, config: AppConfig | None = None):
-        self.base_dir = Path(base_dir).resolve()
-        self.config = config or load_config()
-        self.llm = None
-        self.tools = []
-        self.session_manager = SessionManager(self.base_dir / "sessions")
-        self.prompt_builder = PromptBuilder(self.base_dir)
+        self.base_dir = Path(base_dir).resolve() # 确保路径为绝对路径
+        self.config = config or load_config()    # 如果没传配置，则加载默认配置
+        self.llm = None                          # 初始化时 LLM 为空，待 initialize 调用
+        self.tools = []                          # 初始化时工具列表为空
+        self.session_manager = SessionManager(self.base_dir / "sessions") # 会话管理
+        self.prompt_builder = PromptBuilder(self.base_dir)                # 提示词构建
 
     def initialize(self):
         """Called at startup — build LLM, tools, scan skills."""
-        write_snapshot(self.base_dir)
-        self.llm = get_llm(self.config)
-        self.tools = get_all_tools(self.base_dir)
+        write_snapshot(self.base_dir)        # 扫描当前的技能（Skills）并写入快照
+        self.llm = get_llm(self.config)      # 根据配置获取 LLM 实例（如智谱、OpenAI 等）
+        self.tools = get_all_tools(self.base_dir) # 加载所有可用的工具（Weather, Python REPL 等）
 
     def _get_engine(self) -> BaseEngine:
         engine_name = self.config.agent_engine
