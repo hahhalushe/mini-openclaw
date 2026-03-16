@@ -50,8 +50,8 @@ class AppConfig(BaseModel):
 
 def load_config(path: Path = _DEFAULT_CONFIG_PATH) -> AppConfig:
     if path.exists():
-        data = json.loads(path.read_text(encoding="utf-8"))
-        return AppConfig.model_validate(data)
+        data = json.loads(path.read_text(encoding="utf-8"))    #如果 json对应值和类中的默认不同，会如何？会覆盖默认值
+        return AppConfig.model_validate(data)    #model_validate有什么用？ 
     return AppConfig()
 
 
